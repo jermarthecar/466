@@ -98,7 +98,7 @@ CREATE TABLE Shipment (
 
 -- INSERT SAMPLE DATA INTO CUSTOMER TABLE
 INSERT INTO Customer (Name, Email, Password, ShippingAddress) VALUES
-('John Lennon', 'jlennon@beatles.com', SHA2('imagine123', 256), '251 Menlove Ave, Liverpool, UK'),
+('Bill Cosby', 'billdill@gmail.com', SHA2('lilbill00', 256), '251 Menlove Ave, Liverpool, UK'),
 ('Paul McCartney', 'paul@wings.com', SHA2('letitbe456', 256), '20 Forthlin Rd, Liverpool, UK'),
 ('Mick Jagger', 'mick@stones.com', SHA2('satisfaction789', 256), '3 Cheyne Walk, London, UK'),
 ('David Bowie', 'david@bowieworld.com', SHA2('ziggy1234', 256), '155 Philly Ave, NYC, USA'),
