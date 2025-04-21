@@ -1,0 +1,52 @@
+MariaDB [z1978803]> \. viewtest.sql
+Database changed
++------------+----------------+----------------------+------------------------------------------------------------------+-------------+
+| EmployeeID | Name           | Email                | Password                                                         | AccessLevel |
++------------+----------------+----------------------+------------------------------------------------------------------+-------------+
+|          1 | Brian Epstein  | brian@musicstore.com | 7d51009dc9dd4afa4e27046e99c083f4057dcf181afcfbfd6f95b0701a57b552 | Owner       |
+|          2 | Paris Richards | parisr@music.wav     | e7c9681c6e06f675762332ec3ed5c1a15acc622f6f20c96f6a55b3a365ee43f7 | Employee    |
+|          3 | Tony Smith     | tony@musicstore.com  | 4f0e241958ff3d490e811b2bd844fc4ce7e36d4b7001fab15e308f2143486bc2 | Employee    |
++------------+----------------+----------------------+------------------------------------------------------------------+-------------+
+3 rows in set (0.001 sec)
+
++------------+-----------------+----------------------+------------------------------------------------------------------+--------------------------------+
+| CustomerID | Name            | Email                | Password                                                         | ShippingAddress                |
++------------+-----------------+----------------------+------------------------------------------------------------------+--------------------------------+
+|          1 | John Lennon     | jlennon@beatles.com  | 5dfa868c7c119d7b2faabc4fbff3fd0e84b37df6b9f77a1cb8ffad7c0ae97726 | 251 Menlove Ave, Liverpool, UK |
+|          2 | Paul McCartney  | paul@wings.com       | 303de5b186d43352a5483fecc7833ddfdfd14914104f77cfc27b22e7f08ebd5a | 20 Forthlin Rd, Liverpool, UK  |
+|          3 | Mick Jagger     | mick@stones.com      | 6f6a35b751e33416cd3a3b9da223fad62e008def6dec189156dd26683a4d4f05 | 3 Cheyne Walk, London, UK      |
+|          4 | David Bowie     | david@bowieworld.com | ffa682d94d7047ab7475a6982142fef891de2d65f984353fd47a64a0fa58069c | 155 Philly Ave, NYC, USA       |
+|          5 | Freddie Mercury | freddie@queen.com    | 6ab2aefa5a1311e7bbaad0add6b4cd8bf3bc8d61928ed086207873d7ddb61c37 | 1 Logan Pl, London, UK         |
+|          6 | Jimi Hendrix    | jimi@exp.com         | 35c2bdb536bd1caaf71c86682418124083f9f9b37189ff63f945730ba1f50002 | 23 Brook St, London, UK        |
++------------+-----------------+----------------------+------------------------------------------------------------------+--------------------------------+
+6 rows in set (0.000 sec)
+
++-----------+---------------------------------------+-------+---------------+--------------------------------+------------------+
+| ProductID | Name                                  | Price | StockQuantity | Description                    | Category         |
++-----------+---------------------------------------+-------+---------------+--------------------------------+------------------+
+|         1 | The Beatles - Abbey Road              | 29.99 |            50 | 1969 Original Master Recording | Rock             |
+|         2 | Pink Floyd - Dark Side of the Moon    | 34.99 |            30 | 180g Anniversary Edition       | Progressive Rock |
+|         3 | Michael Jackson - Thriller            | 27.99 |            40 | Limited Edition Red Vinyl      | Pop              |
+|         4 | Led Zeppelin - IV                     | 32.99 |            25 | Remastered 180g Vinyl          | Rock             |
+|         5 | Fleetwood Mac - Rumours               | 28.99 |            35 | 2017 Reissue                   | Rock             |
+|         6 | Prince - Purple Rain                  | 31.99 |            20 | Original Soundtrack            | Funk/Rock        |
+|         7 | Bob Dylan - Highway 61 Revisited      | 26.99 |            45 | Mono Version                   | Folk Rock        |
+|         8 | Radiohead - OK Computer               | 33.99 |            15 | OKNOTOK Reissue                | Alternative Rock |
+|         9 | Nirvana - Nevermind                   | 30.99 |            18 | 30th Anniversary Edition       | Grunge           |
+|        10 | The Rolling Stones - Exile on Main St | 35.99 |            22 | Double LP                      | Rock             |
++-----------+---------------------------------------+-------+---------------+--------------------------------+------------------+
+10 rows in set (0.000 sec)
+
++---------+-----------------+------------+------------+
+| OrderID | Name            | Status     | OrderTotal |
++---------+-----------------+------------+------------+
+|       1 | John Lennon     | Delivered  |      86.97 |
+|       2 | Paul McCartney  | Shipped    |      29.99 |
+|       3 | Mick Jagger     | Processing |     107.97 |
+|       4 | David Bowie     | Delivered  |      67.98 |
+|       5 | Freddie Mercury | Shipped    |      57.98 |
+|       6 | Jimi Hendrix    | Processing |      33.99 |
++---------+-----------------+------------+------------+
+6 rows in set (0.000 sec)
+
+MariaDB [z1978803]> \t
