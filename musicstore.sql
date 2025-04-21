@@ -120,7 +120,7 @@ INSERT INTO Product (Name, Price, StockQuantity, Description, Category) VALUES
 
 -- INSERT SAMPLE DATA INTO EMPLOYEE TABLE
 INSERT INTO Employee (Name, Email, Password, AccessLevel) VALUES
-('Brian Epstein', 'brian@musicstore.com', SHA2('beatles123', 256), 'Owner'),
+('Puff Daddy', 'pdiddy@freak.mp3', SHA2('babyoil69', 256), 'Owner'),
 ('Paris Richards', 'parisr@music.wav', SHA2('parisfrance18', 256), 'Employee'),
 ('Jermar Johnson', 'jermar@diddy.com', SHA2('diddy', 256), 'Employee');
 
