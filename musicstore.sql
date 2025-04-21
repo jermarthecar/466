@@ -40,7 +40,7 @@ CREATE TABLE Cart (
     UNIQUE (CustomerID)
 );
 
--- CARTITEM table
+-- CARTITEM TABLE
 CREATE TABLE CartItem (
     CartItemID INT AUTO_INCREMENT PRIMARY KEY,
     CartID INT NOT NULL,
@@ -51,7 +51,7 @@ CREATE TABLE CartItem (
     UNIQUE (CartID, ProductID)
 );
 
--- ORDER table
+-- ORDER TABLE
 CREATE TABLE `Order` (
     OrderID INT AUTO_INCREMENT PRIMARY KEY,
     CustomerID INT NOT NULL,
