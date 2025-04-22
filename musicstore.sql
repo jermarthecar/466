@@ -98,12 +98,12 @@ CREATE TABLE Shipment (
 
 -- INSERT SAMPLE DATA INTO CUSTOMER TABLE
 INSERT INTO Customer (Name, Email, Password, ShippingAddress) VALUES
-('Bill Cosby', 'billdill@gmail.com', SHA2('lilbill00', 256), '251 Menlove Ave, Liverpool, UK'),
-('Paul McCartney', 'paul@wings.com', SHA2('letitbe456', 256), '20 Forthlin Rd, Liverpool, UK'),
-('Mick Jagger', 'mick@stones.com', SHA2('satisfaction789', 256), '3 Cheyne Walk, London, UK'),
-('David Bowie', 'david@bowieworld.com', SHA2('ziggy1234', 256), '155 Philly Ave, NYC, USA'),
-('Freddie Mercury', 'freddie@queen.com', SHA2('bohemian567', 256), '1 Logan Pl, London, UK'),
-('Jimi Hendrix', 'jimi@exp.com', SHA2('purplehaze89', 256), '23 Brook St, London, UK');
+('Sarah Johnson', 'sarah.johnson@email.com', SHA2('password123', 256), '123 Maple Street, Chicago, IL 60601'),
+('Michael Chen', 'michael.chen@email.com', SHA2('securepass456', 256), '456 Oak Avenue, Boston, MA 02108'),
+('Emily Wilson', 'emily.wilson@email.com', SHA2('wilson789', 256), '789 Pine Road, Austin, TX 78701'),
+('David Kim', 'david.kim@email.com', SHA2('kimdavid2023', 256), '321 Elm Boulevard, Denver, CO 80202'),
+('Jessica Martinez', 'jessica.m@email.com', SHA2('jessm2023!', 256), '654 Cedar Lane, Seattle, WA 98101'),
+('Robert Taylor', 'robert.taylor@email.com', SHA2('taylorrobert99', 256), '987 Birch Street, Miami, FL 33101');
 
 -- INSERT SAMPLE DATA INTO PRODUCT TABLE (Vinyl Records)
 INSERT INTO Product (Name, Price, StockQuantity, Description, Category) VALUES
@@ -123,6 +123,7 @@ INSERT INTO Employee (Name, Email, Password, AccessLevel) VALUES
 ('Puff Daddy', 'pdiddy@freak.mp3', SHA2('babyoil69', 256), 'Owner'),
 ('Paris Richards', 'parisr@music.wav', SHA2('parisfrance18', 256), 'Employee'),
 ('Jermar Johnson', 'jermar@diddy.com', SHA2('diddy', 256), 'Employee')
+('Tosin Nojeed', 'tsin999@music.mp3', SHA2('tsin99', 256), 'Employee')
 ('Matthew Chris', 'matt@musicstore.com, SHA2('shawncombs68', 256), 'Employee');
 
 -- INSERT SAMPLE DATA INTO CART TABLE
@@ -131,34 +132,34 @@ INSERT INTO Cart (CustomerID) VALUES
 
 -- INSERT SAMPLE DATA INTO CARTITEM TABLE
 INSERT INTO CartItem (CartID, ProductID, Quantity) VALUES
-(1, 3, 2),  -- John has 2 Thriller records
-(1, 7, 1),  -- John has 1 Bob Dylan
-(2, 1, 1),  -- Paul has 1 Abbey Road
-(3, 10, 3), -- Mick has 3 Exile on Main St
+(1, 3, 1),  -- Sarah has 1 Thriller record
+(1, 7, 1),  -- Sarah has 1 Bob Dylan
+(2, 1, 2),  -- Michael has 2 Abbey Road
+(3, 10, 1), -- Emily has 1 Exile on Main St
 (4, 2, 1),  -- David has 1 Dark Side
 (4, 4, 1),  -- David has 1 Led Zeppelin
-(5, 5, 2),  -- Freddie has 2 Rumours
-(6, 8, 1);  -- Jimi has 1 OK Computer
+(5, 5, 1),  -- Jessica has 1 Rumours
+(6, 8, 2);  -- Robert has 2 OK Computer
 
 -- INSERT SAMPLE DATA INTO ORDER TABLE
-INSERT INTO `Order` (CustomerID, Status, ShippingAddress, BillingAddress, OrderTotal) VALUES
-(1, 'Delivered', '251 Menlove Ave, Liverpool, UK', '251 Menlove Ave, Liverpool, UK', 86.97),
-(2, 'Shipped', '20 Forthlin Rd, Liverpool, UK', '20 Forthlin Rd, Liverpool, UK', 29.99),
-(3, 'Processing', '3 Cheyne Walk, London, UK', '3 Cheyne Walk, London, UK', 107.97),
-(4, 'Delivered', '155 Philly Ave, NYC, USA', '155 Philly Ave, NYC, USA', 67.98),
-(5, 'Shipped', '1 Logan Pl, London, UK', '1 Logan Pl, London, UK', 57.98),
-(6, 'Processing', '23 Brook St, London, UK', '23 Brook St, London, UK', 33.99);
+INSERT INTO `Order` (CustomerID, Status, ShippingAddress, BillingAddress, OrderTotal, PaymentMethod) VALUES
+(1, 'Delivered', '123 Maple Street, Chicago, IL 60601', '123 Maple Street, Chicago, IL 60601', 54.98, 'Credit Card'),
+(2, 'Shipped', '456 Oak Avenue, Boston, MA 02108', '456 Oak Avenue, Boston, MA 02108', 59.98, 'Debit Card'),
+(3, 'Processing', '789 Pine Road, Austin, TX 78701', '789 Pine Road, Austin, TX 78701', 35.99, 'Credit Card'),
+(4, 'Delivered', '321 Elm Boulevard, Denver, CO 80202', '321 Elm Boulevard, Denver, CO 80202', 67.98, 'Credit Card'),
+(5, 'Shipped', '654 Cedar Lane, Seattle, WA 98101', '654 Cedar Lane, Seattle, WA 98101', 28.99, 'Debit Card'),
+(6, 'Processing', '987 Birch Street, Miami, FL 33101', '987 Birch Street, Miami, FL 33101', 67.98, 'Credit Card');
 
 -- INSERT SAMPLE DATA INTO ORDERITEM TABLE
 INSERT INTO OrderItem (OrderID, ProductID, Quantity, PriceAtOrderTime) VALUES
-(1, 3, 2, 27.99),  -- John's Thriller
-(1, 7, 1, 26.99),  -- John's Bob Dylan
-(2, 1, 1, 29.99),  -- Paul's Abbey Road
-(3, 10, 3, 35.99), -- Mick's Exile on Main St
+(1, 3, 2, 27.99),  -- Sarah's Thriller
+(1, 7, 1, 26.99),  -- Sarah's Bob Dylan
+(2, 1, 1, 29.99),  -- Michael's Abbey Road
+(3, 10, 3, 35.99), -- Emily's Exile on Main St
 (4, 2, 1, 34.99),  -- David's Dark Side
 (4, 4, 1, 32.99),  -- David's Led Zeppelin
-(5, 5, 2, 28.99),  -- Freddie's Rumours
-(6, 8, 1, 33.99);  -- Jimi's OK Computer
+(5, 5, 2, 28.99),  -- Jessica's Rumours
+(6, 8, 1, 33.99);  -- Robert's OK Computer
 
 -- INSERT SAMPLE DATA INTO SHIPMENT TABLE
 INSERT INTO Shipment (OrderID, DateShipped, TrackingNum, Notes) VALUES
