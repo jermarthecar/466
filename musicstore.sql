@@ -122,9 +122,9 @@ INSERT INTO Product (Name, Price, StockQuantity, Description, Category) VALUES
 INSERT INTO Employee (Name, Email, Password, AccessLevel) VALUES
 ('Puff Daddy', 'pdiddy@freak.mp3', SHA2('babyoil69', 256), 'Owner'),
 ('Paris Richards', 'parisr@music.wav', SHA2('parisfrance18', 256), 'Employee'),
-('Jermar Johnson', 'jermar@diddy.com', SHA2('diddy', 256), 'Employee')
-('Tosin Nojeed', 'tsin999@music.mp3', SHA2('tsin99', 256), 'Employee')
-('Matthew Chris', 'matt@musicstore.com, SHA2('shawncombs68', 256), 'Employee');
+('Jermar Johnson', 'jermar@diddy.com', SHA2('diddy', 256), 'Employee'),
+('Tosin Nojeed', 'tsin999@music.mp3', SHA2('tsin99', 256), 'Employee'),
+('Matthew Chris', 'matt@musicstore.com', SHA2('shawncombs68', 256), 'Employee');
 
 -- INSERT SAMPLE DATA INTO CART TABLE
 INSERT INTO Cart (CustomerID) VALUES
