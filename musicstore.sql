@@ -4,6 +4,7 @@
 -- CREATE DATABASE MusicStore;
 USE z1978803; -- Use your own z-number database
 
+DROP TABLE IF EXISTS Message;
 DROP TABLE IF EXISTS Shipment;
 DROP TABLE IF EXISTS OrderItem;
 DROP TABLE IF EXISTS `Order`;
@@ -95,6 +96,19 @@ CREATE TABLE Shipment (
     FOREIGN KEY (OrderID) REFERENCES `Order`(OrderID)
 );
 
+-- MESSAGE TABLE
+CREATE TABLE Message (
+    MessageID INT AUTO_INCREMENT PRIMARY KEY,
+    OrderID INT NOT NULL,
+    EmployeeID INT NOT NULL,
+    CustomerID INT NOT NULL,
+    MessageText TEXT NOT NULL,
+    SentBy ENUM('Employee', 'Customer') NOT NULL,
+    SentAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (OrderID) REFERENCES `Order`(OrderID),
+    FOREIGN KEY (EmployeeID) REFERENCES Employee(EmployeeID),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
 
 -- INSERT SAMPLE DATA INTO CUSTOMER TABLE
 INSERT INTO Customer (Name, Email, Password, ShippingAddress) VALUES
