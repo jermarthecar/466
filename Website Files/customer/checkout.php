@@ -70,6 +70,33 @@ try {
             throw new Exception("Invalid payment method");
         }
 
+        // Validate card details if credit/debit card is selected
+        if (in_array($_POST['payment_method'], ['Credit Card', 'Debit Card'])) {
+            $card_fields = ['card_number', 'expiry_date', 'cvv', 'card_name'];
+            foreach ($card_fields as $field) {
+                if (empty($_POST[$field])) {
+                    throw new Exception("Please fill in all card details");
+                }
+            }
+
+            // Validate card number format
+            if (!preg_match('/^[0-9]{16}$/', $_POST['card_number'])) {
+                throw new Exception("Invalid card number format");
+            }
+
+            // Validate CVV format
+            if (!preg_match('/^[0-9]{3,4}$/', $_POST['cvv'])) {
+                throw new Exception("Invalid CVV format");
+            }
+
+            // Validate expiration date
+            $expiry = DateTime::createFromFormat('Y-m', $_POST['expiry_date']);
+            $now = new DateTime();
+            if (!$expiry || $expiry < $now) {
+                throw new Exception("Invalid or expired card");
+            }
+        }
+
         // Start transaction
         $pdo->beginTransaction();
 
@@ -164,6 +191,27 @@ try {
         </label>
     </div>
 
+    <div id="card-details" style="margin-bottom: 15px; display: none;">
+        <div style="margin-bottom: 10px;">
+            <label for="card_number">Card Number:</label>
+            <input type="text" id="card_number" name="card_number" pattern="[0-9]{16}" maxlength="16" placeholder="1234567890123456" style="width: 100%; padding: 8px;">
+        </div>
+        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <div style="flex: 1;">
+                <label for="expiry_date">Expiration Date:</label>
+                <input type="month" id="expiry_date" name="expiry_date" required style="width: 100%; padding: 8px;">
+            </div>
+            <div style="flex: 1;">
+                <label for="cvv">CVV:</label>
+                <input type="text" id="cvv" name="cvv" pattern="[0-9]{3,4}" maxlength="4" placeholder="123" style="width: 100%; padding: 8px;">
+            </div>
+        </div>
+        <div style="margin-bottom: 10px;">
+            <label for="card_name">Name on Card:</label>
+            <input type="text" id="card_name" name="card_name" required style="width: 100%; padding: 8px;">
+        </div>
+    </div>
+
     <h3>Order Summary</h3>
     <table>
         <tr>
@@ -188,5 +236,24 @@ try {
 
     <button type="submit" class="button">Complete Purchase</button>
 </form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paymentMethodRadios = document.querySelectorAll('input[name="payment_method"]');
+    const cardDetails = document.getElementById('card-details');
+
+    function toggleCardDetails() {
+        const selectedMethod = document.querySelector('input[name="payment_method"]:checked');
+        cardDetails.style.display = selectedMethod ? 'block' : 'none';
+    }
+
+    paymentMethodRadios.forEach(radio => {
+        radio.addEventListener('change', toggleCardDetails);
+    });
+
+    // Initial check
+    toggleCardDetails();
+});
+</script>
 
 <?php require_once '../includes/footer.php'; ?>

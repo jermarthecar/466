@@ -18,8 +18,11 @@ if (!isEmployeeLoggedIn()) {
 // First establish database connection
 require_once '../db_connect.php';
 
+// Define base paths
+$employee_base = './';  // Since we're already in the employee directory
+
 // Then include header which might need database access
-require_once 'header.php';
+require_once '../includes/header.php';
 
 // Get employee name for welcome message
 $employee_name = $_SESSION['employee_name'];
@@ -42,7 +45,7 @@ $employee_name = $_SESSION['employee_name'];
         <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
             <h2 style="margin-bottom: 15px;">Dashboard</h2>
             <p style="margin-bottom: 20px;">View store statistics and analytics</p>
-            <a href="dashboard.php" style="display: inline-block; background: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
+            <a href="<?php echo $employee_base; ?>dashboard.php" style="display: inline-block; background: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px;">
                 View Dashboard
             </a>
         </div>
