@@ -97,11 +97,14 @@ try {
                         In Stock
                     <?php endif; ?>
                 </p>
-                <form method="post" action="cart.php">
-                    <input type="hidden" name="product_id" value="<?php echo $product['ProductID']; ?>">
-                    <input type="hidden" name="action" value="add">
-                    <button type="submit" class="button">Add to Cart</button>
-                </form>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button onclick="window.location.href='product_detail.php?id=<?php echo $product['ProductID']; ?>'" class="button">View Details</button>
+                    <form method="post" action="cart.php" style="margin: 0;">
+                        <input type="hidden" name="product_id" value="<?php echo $product['ProductID']; ?>">
+                        <input type="hidden" name="action" value="add">
+                        <button type="submit" class="button">Add to Cart</button>
+                    </form>
+                </div>
             </div>
         <?php endforeach; ?>
     </div>
