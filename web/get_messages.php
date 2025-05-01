@@ -37,7 +37,8 @@ try {
             <p style="margin: 0;"><?php echo nl2br(htmlspecialchars($message['MessageText'])); ?></p>
         </div>
     <?php endforeach;
-} catch (PDOException $e) {
+}
+catch (PDOException $e) {
     error_log("Error fetching messages: " . $e->getMessage());
     exit('Error fetching messages');
 }

@@ -48,11 +48,13 @@ try {
     ");
     $stmt->execute();
     $deals = $stmt->fetchAll();
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error = $e->getMessage();
 }
 ?>
 
+<!-- Main Content -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <?php if (isset($error)): ?>
         <div class="error-message" style="color: red; padding: 10px; margin: 10px 0; border: 1px solid red; border-radius: 4px;">

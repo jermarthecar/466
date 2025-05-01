@@ -12,9 +12,13 @@ if (!isset($_SESSION['employee_id'])) {
     exit();
 }
 
+// Establish database connection
 require_once '../db_connect.php';
+
+// Include header
 require_once '../includes/header.php';
 
+// Variables for success and error messages
 $success_message = '';
 $error_message = '';
 
@@ -28,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $description = trim($_POST['description']);
         $category = trim($_POST['category']);
 
+        // Check for empty fields and valid values
         if (empty($name) || $price <= 0 || $stock < 0) {
             throw new Exception('Please fill in all required fields with valid values.');
         }
@@ -40,12 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$name, $price, $stock, $description, $category]);
 
         $success_message = 'Product added successfully!';
-    } catch (Exception $e) {
+    } 
+    catch (Exception $e) {
         $error_message = $e->getMessage();
     }
 }
 ?>
 
+<!-- HTML Form for Adding Product -->
 <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
     <h1>Add New Product</h1>
 
@@ -61,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
+    <!-- Add Product Form -->
     <form method="post" style="background: #f9f9f9; padding: 20px; border-radius: 5px;">
         <div style="margin-bottom: 15px;">
             <label for="name">Product Name:</label>

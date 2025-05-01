@@ -9,7 +9,7 @@ session_start();
 // First establish database connection
 require_once 'db_connect.php';
 
-// Then include header which might need database access
+// include header
 require_once 'includes/header.php';
 
 // Initialize variables
@@ -35,20 +35,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate input
     if (empty($first_name) || empty($last_name) || empty($email) || empty($password) || empty($confirm_password)) {
         $error = 'Please fill in all required fields.';
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    } 
+    elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error = 'Please enter a valid email address.';
-    } elseif ($password !== $confirm_password) {
+    } 
+    elseif ($password !== $confirm_password) {
         $error = 'Passwords do not match.';
-    } elseif (strlen($password) < 8) {
+    } 
+    elseif (strlen($password) < 8) {
         $error = 'Password must be at least 8 characters long.';
-    } else {
+    } 
+    else {
         try {
             // Check if email already exists
             $stmt = $pdo->prepare("SELECT CustomerID FROM Customer WHERE Email = ?");
             $stmt->execute([$email]);
             if ($stmt->fetch()) {
                 $error = 'This email is already registered.';
-            } else {
+            } 
+            else {
                 // Hash password
                 $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
@@ -73,16 +78,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 // Clear form
                 $first_name = $last_name = $email = $phone = $address = '';
             }
-        } catch (PDOException $e) {
+        } 
+        catch (PDOException $e) {
             $error = 'An error occurred. Please try again later.';
         }
     }
 }
 ?>
 
+<!-- HTML and CSS for the registration form -->
 <div style="max-width: 600px; margin: 40px auto; padding: 20px; background: #f9f9f9; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
     <h2 style="text-align: center; margin-bottom: 20px;">Create an Account</h2>
     
+    <!-- Display error or success messages -->
     <?php if ($error): ?>
         <div style="color: red; padding: 10px; margin-bottom: 20px; border: 1px solid red; border-radius: 4px;">
             <?php echo htmlspecialchars($error); ?>
@@ -98,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     <?php endif; ?>
 
+    <!-- Registration form -->
     <form method="POST" action="" style="display: flex; flex-direction: column; gap: 15px;">
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
             <div>

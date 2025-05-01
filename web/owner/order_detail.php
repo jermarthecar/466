@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include auth functions first to start session
-require_once '../includes/auth.php'; // This implicitly starts session if not started
+require_once '../includes/auth.php'; // Starts session if not started
 
 // Check if user is logged in as owner using the function
 if (!isOwnerLoggedIn()) {
@@ -13,10 +13,10 @@ if (!isOwnerLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header
 require_once '../includes/header.php';
 
 // Get owner name for welcome message
@@ -33,7 +33,7 @@ if (!$order_id) {
 try {
     // Get order details
     $stmt = $pdo->prepare("
-        SELECT o.*, c.Name as CustomerName, c.Email as CustomerEmail, c.Phone as CustomerPhone,
+        SELECT o.*, c.Name as CustomerName, c.Email as CustomerEmail, c.ShippingAddress,
                s.TrackingNum, s.DateShipped, s.Notes as ShippingNotes
         FROM `Order` o
         JOIN Customer c ON o.CustomerID = c.CustomerID
@@ -50,18 +50,20 @@ try {
 
     // Get order items
     $stmt = $pdo->prepare("
-        SELECT oi.*, p.Name as ProductName
+        SELECT oi.*, p.Name as ProductName, p.Description as ProductDescription, p.Price as ProductPrice
         FROM OrderItem oi
         JOIN Product p ON oi.ProductID = p.ProductID
         WHERE oi.OrderID = ?
     ");
     $stmt->execute([$order_id]);
     $items = $stmt->fetchAll();
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error = "Error loading order details: " . $e->getMessage();
 }
 ?>
 
+<!-- HTML and CSS for the order details page -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Order Details</h1>
 
@@ -81,7 +83,6 @@ try {
                 <h3 style="margin-top: 20px;">Customer Information</h3>
                 <p><strong>Name:</strong> <?php echo htmlspecialchars($order['CustomerName']); ?></p>
                 <p><strong>Email:</strong> <?php echo htmlspecialchars($order['CustomerEmail']); ?></p>
-                <p><strong>Phone:</strong> <?php echo htmlspecialchars($order['CustomerPhone']); ?></p>
 
                 <h3 style="margin-top: 20px;">Shipping Information</h3>
                 <p><strong>Address:</strong></p>
@@ -112,7 +113,7 @@ try {
                             <tr style="border-bottom: 1px solid #ddd;">
                                 <td style="padding: 10px;"><?php echo htmlspecialchars($item['ProductName']); ?></td>
                                 <td style="padding: 10px;"><?php echo htmlspecialchars($item['Quantity']); ?></td>
-                                <td style="padding: 10px;">$<?php echo number_format($item['PriceAtOrderTime'], 2); ?></td>
+                                <td style="padding: 10px;">$<?php echo number_format($item['ProductPrice'], 2); ?></td>
                                 <td style="padding: 10px;">$<?php echo number_format($item['Subtotal'], 2); ?></td>
                             </tr>
                         <?php endforeach; ?>

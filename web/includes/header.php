@@ -1,17 +1,17 @@
 <?php
-// ENABLE ERROR REPORTING
+// Enable error reporting
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// --- Session is expected to be started by auth.php if included, or by the calling script ---
+// Session is expected to be started by auth.php if included, or by the calling script
 
-// --- Database connection check ---
+// Database connection check
 if (!isset($pdo)) {
     // __DIR__ is the directory of *this* file (includes/)
-    require_once __DIR__ . '/../db_connect.php';
-    if (!isset($pdo)) {
-        error_log("Database connection (\$pdo) not available in header.php");
+     require_once __DIR__ . '/../db_connect.php';
+     if (!isset($pdo)) {
+         error_log("Database connection (\$pdo) not available in header.php");
     }
 }
 
@@ -25,11 +25,12 @@ $is_in_owner = (strpos($current_script_path, '/owner/') !== false);
 $is_in_employee = (strpos($current_script_path, '/employee/') !== false);
 $is_in_root = !$is_in_customer && !$is_in_owner && !$is_in_employee;
 
-// --- Define relative base paths ---
+// Define relative base paths
 $root_rel_path = ''; // Path prefix to get TO the web root directory
 if ($is_in_customer || $is_in_owner || $is_in_employee) {
     $root_rel_path = '../'; // Go up one level from customer/, owner/, employee/
-} else {
+} 
+else {
     $root_rel_path = './'; // Already in the root
 }
 
@@ -67,13 +68,14 @@ if ($is_in_customer || $is_in_owner || $is_in_employee) {
 <header>
     <nav>
         <div>
-            <?php // Use RELATIVE paths calculated above ?>
+            <!-- Use relative paths based on user type -->
             <?php if ($user_type === 'customer'): ?>
                 <a href="<?php echo $is_in_customer ? 'index.php' : 'customer/index.php'; ?>">Home</a>
                 <a href="<?php echo $is_in_customer ? 'products.php' : 'customer/products.php'; ?>">Products</a>
                 <a href="<?php echo $is_in_customer ? 'cart.php' : 'customer/cart.php'; ?>" class="cart-link">
                     Cart
                     <?php
+                    // Check if the user is logged in and fetch cart count
                     if (isset($pdo) && isset($_SESSION['customer_id'])) {
                         try {
                             $stmt = $pdo->prepare("SELECT SUM(Quantity) as total FROM CartItem ci JOIN Cart c ON ci.CartID = c.CartID WHERE c.CustomerID = ?");
@@ -82,7 +84,8 @@ if ($is_in_customer || $is_in_owner || $is_in_employee) {
                             if ($cart_total > 0) {
                                 echo '<span class="cart-count">' . $cart_total . '</span>';
                             }
-                        } catch (PDOException $e) {
+                        } 
+                        catch (PDOException $e) {
                              error_log("Error fetching cart count: " . $e->getMessage());
                         }
                     }
@@ -95,15 +98,15 @@ if ($is_in_customer || $is_in_owner || $is_in_employee) {
                 <a href="<?php echo $is_in_owner ? 'products.php' : 'owner/products.php'; ?>">Products</a>
                 <a href="<?php echo $is_in_owner ? 'employees.php' : 'owner/employees.php'; ?>">Employees</a>
                 <a href="<?php echo $is_in_owner ? 'reports.php' : 'owner/reports.php'; ?>">Reports</a>
-            <?php elseif (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'employee'): ?>
+                <?php elseif (isset($_SESSION['user_type']) && $_SESSION['user_type'] === 'employee'): ?>
                 <a href="<?php echo $is_in_employee ? 'index.php' : 'employee/index.php'; ?>">Home</a>
                 <a href="<?php echo $is_in_employee ? 'dashboard.php' : 'employee/dashboard.php'; ?>">Dashboard</a>
                 <a href="<?php echo $is_in_employee ? 'orders.php' : 'employee/orders.php'; ?>">Orders</a>
                 <a href="<?php echo $is_in_employee ? 'products.php' : 'employee/products.php'; ?>">Products</a>
                 <a href="<?php echo $is_in_employee ? 'customers.php' : 'employee/customers.php'; ?>">Customers</a>
-            <?php else: // Not logged in ?>
-                <a href="<?php echo $root_rel_path; ?>index.php">Home</a>
-            <?php endif; ?>
+                 <?php else:?>
+                <a href="<?php echo $root_rel_path; ?>index.php">Home</a> <!-- Not logged in -->
+                 <?php endif; ?>
         </div>
         <div class="user-info">
              <?php if ($user_type === 'customer'): ?>
@@ -115,7 +118,7 @@ if ($is_in_customer || $is_in_owner || $is_in_employee) {
             <?php elseif ($user_type === 'employee'): ?>
                  <span class="user-name">Hi, <?php echo htmlspecialchars(explode(' ', $_SESSION['employee_name'])[0]); ?> (Employee)</span>
                 <a href="<?php echo $is_in_employee ? 'logout.php' : 'employee/logout.php'; ?>" class="button">Logout</a>
-            <?php else: // Not logged in ?>
+            <?php else:?> <!-- Not logged in -->
                 <a href="<?php echo $root_rel_path; ?>register.php">Register</a>
                 <a href="<?php echo $root_rel_path; ?>login.php" class="button">Login</a>
             <?php endif; ?>

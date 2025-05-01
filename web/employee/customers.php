@@ -15,7 +15,7 @@ if (!isEmployeeLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
 // Handle search
@@ -42,7 +42,8 @@ try {
     if (!empty($search)) {
         $query .= " WHERE c.Name LIKE ? OR c.Email LIKE ?";
         $params = ["%$search%", "%$search%"];
-    } else {
+    } 
+    else {
         $params = [];
     }
     
@@ -51,7 +52,8 @@ try {
     $stmt = $pdo->prepare($query);
     $stmt->execute($params);
     $customers = $stmt->fetchAll();
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error_message = "Error fetching customers: " . $e->getMessage();
 }
 
@@ -91,6 +93,7 @@ require_once '../includes/header.php';
                 </tr>
             </thead>
             <tbody>
+                <!-- Loop through customers and display them -->
                 <?php foreach ($customers as $customer): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($customer['CustomerID']); ?></td>

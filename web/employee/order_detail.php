@@ -12,10 +12,10 @@ if (!isset($_SESSION['employee_id'])) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header
 require_once '../includes/header.php';
 
 // Get employee name for welcome message
@@ -32,18 +32,27 @@ if (!$order_id) {
 try {
     // Get order details
     $stmt = $pdo->prepare("
-        SELECT o.*, c.Name as CustomerName, c.Email as CustomerEmail,
-               s.TrackingNum, s.DateShipped, s.Notes
+        SELECT 
+            o.*,
+            c.Name as CustomerName,
+            c.Email as CustomerEmail,
+            c.ShippingAddress,
+            s.TrackingNum,
+            s.DateShipped,
+            s.Notes as ShippingNotes,
+            COUNT(oi.OrderItemID) as item_count
         FROM `Order` o
         JOIN Customer c ON o.CustomerID = c.CustomerID
         LEFT JOIN Shipment s ON o.OrderID = s.OrderID
+        LEFT JOIN OrderItem oi ON o.OrderID = oi.OrderID
         WHERE o.OrderID = ?
+        GROUP BY o.OrderID
     ");
     $stmt->execute([$order_id]);
     $order = $stmt->fetch();
 
     if (!$order) {
-        header('Location: orders.php');
+        header("Location: orders.php");
         exit();
     }
 
@@ -152,7 +161,8 @@ try {
             $pdo->commit();
             header("Location: order_detail.php?id=" . $order_id);
             exit();
-        } catch (Exception $e) {
+        } 
+        catch (Exception $e) {
             $pdo->rollBack();
             $error = $e->getMessage();
         }
@@ -160,18 +170,24 @@ try {
 
     // Get order items
     $stmt = $pdo->prepare("
-        SELECT oi.*, p.Name as ProductName
+        SELECT 
+            oi.*,
+            p.Name as ProductName,
+            p.Description as ProductDescription,
+            p.Price as ProductPrice
         FROM OrderItem oi
         JOIN Product p ON oi.ProductID = p.ProductID
         WHERE oi.OrderID = ?
     ");
     $stmt->execute([$order_id]);
     $items = $stmt->fetchAll();
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error = "Error loading order details: " . $e->getMessage();
 }
 ?>
 
+<!-- HTML and CSS for Order Details Page -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Order Details</h1>
     
@@ -187,6 +203,7 @@ try {
         </div>
     <?php endif; ?>
 
+    <!-- Order Information -->
     <?php if ($order): ?>
         <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
             <h2>Order Information</h2>
@@ -198,8 +215,8 @@ try {
             <?php if ($order['Status'] === 'Shipped' || $order['Status'] === 'Delivered'): ?>
                 <p><strong>Tracking Number:</strong> <?php echo htmlspecialchars($order['TrackingNum']); ?></p>
                 <p><strong>Date Shipped:</strong> <?php echo htmlspecialchars($order['DateShipped']); ?></p>
-                <?php if (!empty($order['Notes'])): ?>
-                    <p><strong>Delivery Notes:</strong> <?php echo htmlspecialchars($order['Notes']); ?></p>
+                <?php if (!empty($order['ShippingNotes'])): ?>
+                    <p><strong>Delivery Notes:</strong> <?php echo htmlspecialchars($order['ShippingNotes']); ?></p>
                 <?php endif; ?>
             <?php endif; ?>
             <p><strong>Total:</strong> $<?php echo number_format($order['OrderTotal'], 2); ?></p>
@@ -221,7 +238,7 @@ try {
                         <tr style="border-bottom: 1px solid #ddd;">
                             <td style="padding: 10px;"><?php echo htmlspecialchars($item['ProductName']); ?></td>
                             <td style="padding: 10px;"><?php echo htmlspecialchars($item['Quantity']); ?></td>
-                            <td style="padding: 10px;">$<?php echo number_format($item['PriceAtOrderTime'], 2); ?></td>
+                            <td style="padding: 10px;">$<?php echo number_format($item['ProductPrice'], 2); ?></td>
                             <td style="padding: 10px;">$<?php echo number_format($item['Subtotal'], 2); ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -239,6 +256,7 @@ try {
                 <button type="submit" class="button">Send Message</button>
             </form>
 
+            <!-- Message History -->
             <?php if (!empty($messages)): ?>
                 <h3>Message History</h3>
                 <div id="message-history" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
@@ -278,6 +296,7 @@ try {
         document.addEventListener('DOMContentLoaded', fetchMessages);
         </script>
 
+        <!-- Order Processing Section -->
         <?php if ($order['Status'] === 'Processing'): ?>
             <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
                 <h2>Process Order</h2>

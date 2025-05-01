@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include auth functions first to start session
-require_once '../includes/auth.php'; // This implicitly starts session if not started
+require_once '../includes/auth.php'; // Starts session if not started
 
 // Check if user is logged in as owner using the function
 if (!isOwnerLoggedIn()) {
@@ -13,10 +13,10 @@ if (!isOwnerLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header
 require_once '../includes/header.php';
 
 // Get owner name for welcome message
@@ -57,11 +57,13 @@ try {
     $stmt = $pdo->prepare($query);
     $stmt->execute();
     $orders = $stmt->fetchAll();
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error = "Database error: " . $e->getMessage();
 }
 ?>
 
+<!-- HTML and CSS for the page -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Order Management</h1>
 
@@ -92,6 +94,7 @@ try {
             </tr>
         </thead>
         <tbody>
+            <!-- Loop through orders and display them -->
             <?php foreach ($orders as $order): ?>
                 <tr style="border-bottom: 1px solid #ddd;">
                     <td style="padding: 10px;">
@@ -104,6 +107,7 @@ try {
                     <td style="padding: 10px;">
                         <?php
                         $status_class = '';
+                        // Set status color based on order status
                         switch ($order['Status']) {
                             case 'Processing':
                                 $status_class = 'color: orange;';

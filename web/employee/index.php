@@ -15,19 +15,20 @@ if (!isEmployeeLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
 // Define base paths
 $employee_base = './';  // Since we're already in the employee directory
 
-// Then include header which might need database access
+// Include
 require_once '../includes/header.php';
 
 // Get employee name for welcome message
 $employee_name = $_SESSION['employee_name'];
 ?>
 
+<!-- HTML for Employee Dashboard -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Welcome, <?php echo htmlspecialchars($employee_name); ?></h1>
     
@@ -79,6 +80,7 @@ $employee_name = $_SESSION['employee_name'];
             $stmt->execute();
             $recent_orders = $stmt->fetchAll();
 
+            // Check if there are recent orders
             if ($recent_orders) {
                 echo '<div style="overflow-x: auto;">';
                 echo '<table style="width: 100%; border-collapse: collapse;">';
@@ -90,6 +92,7 @@ $employee_name = $_SESSION['employee_name'];
                 echo '<th style="padding: 10px; text-align: left;">Action</th>';
                 echo '</tr></thead><tbody>';
 
+                // Loop through each order and display it in the table
                 foreach ($recent_orders as $order) {
                     echo '<tr style="border-bottom: 1px solid #ddd;">';
                     echo '<td style="padding: 10px;">#' . htmlspecialchars($order['OrderID']) . '</td>';
@@ -104,10 +107,12 @@ $employee_name = $_SESSION['employee_name'];
 
                 echo '</tbody></table>';
                 echo '</div>';
-            } else {
+            } 
+            else {
                 echo '<p>No recent orders found.</p>';
             }
-        } catch (PDOException $e) {
+        } 
+        catch (PDOException $e) {
             echo '<p style="color: red;">Error loading recent orders: ' . htmlspecialchars($e->getMessage()) . '</p>';
         }
         ?>

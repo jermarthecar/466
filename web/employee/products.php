@@ -117,6 +117,7 @@ $employee_name = $_SESSION['employee_name'];
             </tr>
         </thead>
         <tbody>
+            <!-- Loop through products and display them -->
             <?php foreach ($products as $product): ?>
                 <tr style="border-bottom: 1px solid #ddd;">
                     <td style="padding: 10px;"><?php echo $product['ProductID']; ?></td>

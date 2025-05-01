@@ -1,12 +1,12 @@
 <?php
-// ENABLE ERROR REPORTING
+// enable error reporting
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
 
-// Clear all session variables
+// clear all session variables
 $_SESSION = array();
 
 // Destroy the session

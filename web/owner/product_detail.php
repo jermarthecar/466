@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include auth functions first to start session
-require_once '../includes/auth.php'; // This implicitly starts session if not started
+require_once '../includes/auth.php'; // Starts session if not started
 
 // Check if user is logged in as owner using the function
 if (!isOwnerLoggedIn()) {
@@ -13,10 +13,10 @@ if (!isOwnerLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header
 require_once '../includes/header.php';
 
 // Get owner name for welcome message
@@ -25,17 +25,19 @@ $owner_name = $_SESSION['employee_name'];
 // Get product ID from URL
 $product_id = $_GET['id'] ?? 0;
 
+// Validate product ID
 if (!$product_id) {
     header('Location: products.php');
     exit();
 }
 
-$product = null; // Initialize
-$sales_history = []; // Initialize
-$error = ''; // Initialize
+// Initialize variables
+$product = null;
+$sales_history = [];
+$error = ''; 
 
 try {
-    // Get product details - select p.Category, remove JOIN
+    // Get product details
     $stmt = $pdo->prepare("
         SELECT p.*, p.Category as CategoryName -- Get category name from Product table
         FROM Product p
@@ -45,6 +47,7 @@ try {
     $stmt->execute([$product_id]);
     $product = $stmt->fetch();
 
+    // Check if product exists
     if (!$product) {
         header('Location: products.php');
         exit();
@@ -62,11 +65,13 @@ try {
     ");
     $stmt->execute([$product_id]);
     $sales_history = $stmt->fetchAll();
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error = "Error loading product details: " . $e->getMessage();
 }
 ?>
 
+<!-- HTML and CSS for product details page -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Product Details</h1>
 
@@ -82,6 +87,7 @@ try {
                 <p><strong>Category:</strong> <?php echo htmlspecialchars($product['CategoryName']); // Use alias from query ?></p>
                 <p><strong>Price:</strong> $<?php echo number_format($product['Price'], 2); ?></p>
                 <p><strong>Stock Quantity:</strong>
+                <!-- Display stock status with color coding -->
                     <?php if ($product['StockQuantity'] == 0): ?>
                         <span style="color: red;">Out of Stock</span>
                     <?php elseif ($product['StockQuantity'] < 5): ?>
@@ -101,6 +107,7 @@ try {
 
             <div style="flex: 1; background: #f9f9f9; padding: 20px; border-radius: 5px;">
                 <h2>Recent Sales History</h2>
+                <!-- Display sales history in a table -->
                 <?php if (count($sales_history) > 0): ?>
                     <table style="width: 100%; border-collapse: collapse;">
                         <thead>
@@ -112,6 +119,7 @@ try {
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- Loop through sales history and display them -->
                             <?php foreach ($sales_history as $sale): ?>
                                 <tr style="border-bottom: 1px solid #ddd;">
                                     <td style="padding: 10px;"><?php echo htmlspecialchars(date('Y-m-d', strtotime($sale['OrderDate']))); ?></td>

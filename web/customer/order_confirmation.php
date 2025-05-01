@@ -53,6 +53,7 @@ try {
 }
 ?>
 
+<!-- Main Content -->
 <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
     <?php if (isset($error)): ?>
         <div class="error-message" style="color: red; padding: 10px; margin: 10px 0; border: 1px solid red; border-radius: 4px;">
@@ -65,6 +66,7 @@ try {
             <p>Your order has been received and is being processed.</p>
         </div>
 
+        <!-- Order Details -->
         <div style="background: #f9f9f9; padding: 20px; border-radius: 5px; margin-bottom: 30px;">
             <h2>Order Details</h2>
             <p><strong>Order Number:</strong> #<?php echo $order['OrderID']; ?></p>
@@ -80,6 +82,7 @@ try {
             </div>
         </div>
 
+        <!-- Order Items -->
         <div style="margin-bottom: 30px;">
             <h2>Order Items</h2>
             <table>
@@ -89,6 +92,7 @@ try {
                     <th>Quantity</th>
                     <th>Subtotal</th>
                 </tr>
+                <!-- Loop through order items and display them -->
                 <?php foreach ($order_items as $item): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($item['ProductName']); ?></td>

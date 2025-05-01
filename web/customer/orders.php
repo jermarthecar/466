@@ -18,6 +18,7 @@ if (!isCustomerLoggedIn()) {
 // Include header after authentication check
 require_once '../includes/header.php';
 
+// Get past orders for the logged-in customer
 $stmt = $pdo->prepare("
     SELECT o.OrderID, o.OrderDate, o.Status, o.OrderTotal 
     FROM `Order` o 
@@ -30,6 +31,7 @@ $orders = $stmt->fetchAll();
 
 <h2>My Orders</h2>
 
+<!-- Diplay past orders -->
 <?php if (count($orders) > 0): ?>
     <table>
         <tr>

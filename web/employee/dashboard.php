@@ -10,22 +10,22 @@ error_reporting(E_ALL);
 require_once '../includes/auth.php';
 
 // Check if user is logged in as employee
-// Now $_SESSION variables should be accessible
 if (!isset($_SESSION['employee_id']) || $_SESSION['user_type'] !== 'employee') {
     header('Location: ../login.php');
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header
 require_once '../includes/header.php';
 
 // Get employee name for welcome message
 $employee_name = $_SESSION['employee_name'];
 ?>
 
+<!-- HTML for Employee Dashboard -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Employee Dashboard</h1>
 
@@ -40,12 +40,14 @@ $employee_name = $_SESSION['employee_name'];
                     $stmt->execute();
                     $count = $stmt->fetchColumn();
                     echo '<p style="font-size: 24px;">' . ($count ?? 0) . '</p>';
-                 } catch (PDOException $e) {
+                 } 
+                 catch (PDOException $e) {
                     echo '<p style="color:red;">Error</p>';
                     error_log("DB Error in employee dashboard (Pending Orders): " . $e->getMessage());
                  }
-             } else {
-                 echo '<p style="color:red;">DB Error</p>';
+             } 
+             else {
+                echo '<p style="color:red;">DB Error</p>';
              }
 
             ?>
@@ -58,22 +60,25 @@ $employee_name = $_SESSION['employee_name'];
              // Ensure $pdo is available
               if (isset($pdo)) {
                  try {
-                     $stmt = $pdo->prepare("SELECT COUNT(*) FROM Product WHERE StockQuantity < 5");
-                     $stmt->execute();
-                     $count = $stmt->fetchColumn();
-                     echo '<p style="font-size: 24px;">' . ($count ?? 0) . '</p>';
-                 } catch (PDOException $e) {
-                     echo '<p style="color:red;">Error</p>';
-                     error_log("DB Error in employee dashboard (Low Stock): " . $e->getMessage());
+                    $stmt = $pdo->prepare("SELECT COUNT(*) FROM Product WHERE StockQuantity < 5");
+                    $stmt->execute();
+                    $count = $stmt->fetchColumn();
+                    echo '<p style="font-size: 24px;">' . ($count ?? 0) . '</p>';
+                 } 
+                 catch (PDOException $e) {
+                    echo '<p style="color:red;">Error</p>';
+                    error_log("DB Error in employee dashboard (Low Stock): " . $e->getMessage());
                  }
-              } else {
-                  echo '<p style="color:red;">DB Error</p>';
+              } 
+              else {
+                echo '<p style="color:red;">DB Error</p>';
               }
              ?>
             <a href="products.php?low_stock=1" class="button">View</a>
         </div>
     </div>
 
+    <!-- Recent Orders and Low Stock Items -->
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;">
         <div>
             <h3>Recent Orders</h3>
@@ -90,7 +95,8 @@ $employee_name = $_SESSION['employee_name'];
                     ");
                     $stmt->execute();
                     $orders = $stmt->fetchAll();
-
+                    
+                    // Display recent orders in a table
                     if (count($orders) > 0): ?>
                         <table>
                             <thead> <tr>
@@ -102,6 +108,7 @@ $employee_name = $_SESSION['employee_name'];
                                 <th>Actions</th>
                             </tr>
                              </thead>
+                             <!-- Table Body -->
                              <tbody> <?php foreach ($orders as $order): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($order['OrderID']); ?></td>
@@ -144,7 +151,8 @@ $employee_name = $_SESSION['employee_name'];
                     ");
                     $stmt->execute();
                     $products = $stmt->fetchAll();
-
+                    
+                    // Display low stock items in a table
                     if (count($products) > 0): ?>
                         <table>
                              <thead> <tr>
@@ -154,10 +162,11 @@ $employee_name = $_SESSION['employee_name'];
                                 <th>Stock</th>
                             </tr>
                             </thead>
+                            <!-- Table Body -->
                             <tbody> <?php foreach ($products as $product): ?>
                                 <tr>
                                     <td><?php echo htmlspecialchars($product['Name']); ?></td>
-                                    <td><?php echo htmlspecialchars($product['Category'] ?? 'N/A'); // Added null check for Category ?></td>
+                                    <td><?php echo htmlspecialchars($product['Category'] ?? 'N/A');?></td>
                                     <td>$<?php echo number_format($product['Price'], 2); ?></td>
                                     <td><?php echo $product['StockQuantity']; ?></td>
                                 </tr>
@@ -167,11 +176,13 @@ $employee_name = $_SESSION['employee_name'];
                     <?php else: ?>
                         <p>No low stock items found.</p>
                     <?php endif;
-                 } catch (PDOException $e) {
+                 } 
+                 catch (PDOException $e) {
                     echo '<p style="color:red;">Error loading low stock items.</p>';
                     error_log("DB Error in employee dashboard (Low Stock Items): " . $e->getMessage());
                  }
-            } else {
+            } 
+            else {
                 echo '<p style="color:red;">DB Error loading low stock items.</p>';
             }
             ?>

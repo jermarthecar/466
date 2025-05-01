@@ -13,16 +13,17 @@ if (!isset($_SESSION['employee_id']) || $_SESSION['user_type'] !== 'owner') {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header
 require_once '../includes/header.php';
 
 // Get owner name for welcome message
 $owner_name = $_SESSION['employee_name'];
 ?>
 
+<!-- HTML and CSS for the dashboard -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Owner Dashboard</h1>
     
@@ -30,6 +31,7 @@ $owner_name = $_SESSION['employee_name'];
         <div style="text-align: center;">
             <h3>Total Revenue</h3>
             <?php
+            // Fetch total revenue from completed orders
             $stmt = $pdo->prepare("SELECT SUM(OrderTotal) FROM `Order` WHERE Status = 'Completed'");
             $stmt->execute();
             $revenue = $stmt->fetchColumn();
@@ -40,6 +42,7 @@ $owner_name = $_SESSION['employee_name'];
         <div style="text-align: center;">
             <h3>Pending Orders</h3>
             <?php
+            // Fetch count of pending orders
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM `Order` WHERE Status = 'Processing'");
             $stmt->execute();
             $count = $stmt->fetchColumn();
@@ -51,6 +54,7 @@ $owner_name = $_SESSION['employee_name'];
         <div style="text-align: center;">
             <h3>Low Stock</h3>
             <?php
+            // Fetch count of products with low stock
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM Product WHERE StockQuantity < 5");
             $stmt->execute();
             $count = $stmt->fetchColumn();
@@ -65,6 +69,7 @@ $owner_name = $_SESSION['employee_name'];
         <div>
             <h3>Recent Orders</h3>
             <?php
+            // Fetch recent orders
             $stmt = $pdo->prepare("
                 SELECT o.OrderID, o.OrderDate, o.Status, o.OrderTotal, c.Name AS CustomerName 
                 FROM `Order` o 
@@ -75,7 +80,8 @@ $owner_name = $_SESSION['employee_name'];
             $stmt->execute();
             $orders = $stmt->fetchAll();
             ?>
-
+            
+            <!-- Display recent orders in a table -->
             <?php if (count($orders) > 0): ?>
                 <table>
                     <tr>
@@ -86,6 +92,7 @@ $owner_name = $_SESSION['employee_name'];
                         <th>Total</th>
                         <th>Actions</th>
                     </tr>
+                    <!-- Loop through each order and display its details -->
                     <?php foreach ($orders as $order): ?>
                         <tr>
                             <td><?php echo htmlspecialchars($order['OrderID']); ?></td>
@@ -108,6 +115,7 @@ $owner_name = $_SESSION['employee_name'];
         <div>
             <h3>Top Selling Products</h3>
             <?php
+            // Fetch top selling products
             $stmt = $pdo->prepare("
                 SELECT p.Name, p.Category, p.Price, SUM(oi.Quantity) as TotalSold
                 FROM Product p
@@ -122,6 +130,7 @@ $owner_name = $_SESSION['employee_name'];
             $products = $stmt->fetchAll();
             ?>
 
+            <!-- Display top selling products in a table -->
             <?php if (count($products) > 0): ?>
                 <table>
                     <tr>
@@ -130,6 +139,7 @@ $owner_name = $_SESSION['employee_name'];
                         <th>Price</th>
                         <th>Units Sold</th>
                     </tr>
+                    <!-- Loop through each product and display its details -->
                     <?php foreach ($products as $product): ?>
                         <tr>
                             <td><?php echo htmlspecialchars($product['Name']); ?></td>

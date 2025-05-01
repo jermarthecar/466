@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include auth functions first to start session
-require_once '../includes/auth.php'; // This implicitly starts session if not started
+require_once '../includes/auth.php'; // Starts session if not started
 
 // Check if user is logged in as owner using the function
 if (!isOwnerLoggedIn()) {
@@ -13,10 +13,10 @@ if (!isOwnerLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header
 require_once '../includes/header.php';
 
 // Get owner name for welcome message
@@ -25,6 +25,7 @@ $owner_name = $_SESSION['employee_name'];
 // Get product ID from URL
 $product_id = $_GET['id'] ?? 0;
 
+// Validate product ID
 if (!$product_id) {
     header('Location: products.php');
     exit();
@@ -34,7 +35,7 @@ $product = null; // Initialize product variable
 $error = ''; // Initialize error message
 
 try {
-    // Get product details - fetch p.Category
+    // Get product details
     $stmt = $pdo->prepare("
         SELECT p.*
         FROM Product p
@@ -43,12 +44,12 @@ try {
     $stmt->execute([$product_id]);
     $product = $stmt->fetch();
 
+    // Check if product exists
     if (!$product) {
         header('Location: products.php');
         exit();
     }
 
-    // No need to fetch categories from separate table
 
     // Handle form submission
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -61,22 +62,28 @@ try {
         // Validate inputs
         if (empty($name)) {
             $error = "Product name cannot be empty.";
-        } elseif (empty($description)) {
+        } 
+        elseif (empty($description)) {
             $error = "Product description cannot be empty.";
-        } elseif (!is_numeric($price) || floatval($price) <= 0) {
+        } 
+        elseif (!is_numeric($price) || floatval($price) <= 0) {
             $error = "Please enter a valid positive price.";
-        } elseif (!is_numeric($stock_quantity) || intval($stock_quantity) < 0) {
+        } 
+        elseif (!is_numeric($stock_quantity) || intval($stock_quantity) < 0) {
             $error = "Please enter a valid non-negative stock quantity.";
-        } elseif (empty($category_name)) {
+        } 
+        elseif (empty($category_name)) {
             $error = "Please enter a category name.";
-        } elseif (strlen($category_name) > 50) {
+        } 
+        elseif (strlen($category_name) > 50) {
              $error = "Category name cannot exceed 50 characters.";
-        } else {
+        } 
+        else {
             // Convert price and stock to appropriate types
             $price_float = floatval($price);
             $stock_int = intval($stock_quantity);
 
-            // Update product - update Product.Category column
+            // Update product
             $stmt = $pdo->prepare("
                 UPDATE Product
                 SET Name = ?, Description = ?, Price = ?, StockQuantity = ?, Category = ?
@@ -86,7 +93,8 @@ try {
                  // Redirect on success to prevent re-submission
                  header('Location: product_detail.php?id=' . $product_id . '&success=1');
                  exit();
-            } else {
+            } 
+            else {
                  $error = "Failed to update product.";
             }
         }
@@ -95,7 +103,8 @@ try {
          $stmt->execute([$product_id]);
          $product = $stmt->fetch();
     }
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error = "Database error: " . $e->getMessage();
     // Fetch product again in case of error during update process to display form
     if ($product_id && !$product) {
@@ -103,7 +112,8 @@ try {
               $stmt = $pdo->prepare("SELECT p.* FROM Product p WHERE p.ProductID = ?");
               $stmt->execute([$product_id]);
               $product = $stmt->fetch();
-         } catch (PDOException $e2) { /* Ignore error fetching after error */ }
+         } 
+        catch (PDOException $e2) // Ignore error fetching after error
     }
 }
 
@@ -112,6 +122,7 @@ $success_message = isset($_GET['success']) ? "Product updated successfully!" : "
 
 ?>
 
+<!-- HTML and CSS for the form -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Edit Product</h1>
 
@@ -126,7 +137,7 @@ $success_message = isset($_GET['success']) ? "Product updated successfully!" : "
         </div>
     <?php endif; ?>
 
-    <?php if ($product): // Only show form if product was loaded ?>
+    <?php if ($product):?> <!-- Only show form if product exists -->
     <div style="background: #f9f9f9; padding: 20px; border-radius: 5px;">
         <form method="post" style="max-width: 600px; margin: 0 auto;">
             <div style="margin-bottom: 15px;">

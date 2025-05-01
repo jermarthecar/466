@@ -12,9 +12,13 @@ if (!isset($_SESSION['employee_id'])) {
     exit();
 }
 
+// Establish database connection
 require_once '../db_connect.php';
+
+// Include header
 require_once '../includes/header.php';
 
+// Initialize variables
 $success_message = '';
 $error_message = '';
 $product = null;
@@ -66,11 +70,13 @@ try {
         $stmt->execute([$product_id]);
         $product = $stmt->fetch();
     }
-} catch (Exception $e) {
+} 
+catch (Exception $e) {
     $error_message = $e->getMessage();
 }
 ?>
 
+<!-- HTML Form for Editing Product -->
 <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
     <h1>Edit Product</h1>
 
@@ -86,6 +92,7 @@ try {
         </div>
     <?php endif; ?>
 
+    <!-- Product Edit Form -->
     <form method="post" style="background: #f9f9f9; padding: 20px; border-radius: 5px;">
         <div style="margin-bottom: 15px;">
             <label for="name">Product Name:</label>

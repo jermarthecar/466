@@ -157,7 +157,8 @@ try {
             throw $e;
         }
     }
-} catch (Exception $e) {
+} 
+catch (Exception $e) {
     $error = $e->getMessage();
 }
 ?>
@@ -170,6 +171,7 @@ try {
     </div>
 <?php endif; ?>
 
+<!-- Form for shipping and billing address, payment method, and order summary -->
 <form method="post">
     <div style="margin-bottom: 15px;">
         <label for="shipping_address">Shipping Address:</label>

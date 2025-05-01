@@ -15,7 +15,7 @@ if (!isEmployeeLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
 // Get customer ID from URL
@@ -65,7 +65,8 @@ try {
     $stmt->execute([$customer_id]);
     $orders = $stmt->fetchAll();
 
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error_message = "Error fetching customer details: " . $e->getMessage();
 }
 
@@ -73,6 +74,7 @@ try {
 require_once '../includes/header.php';
 ?>
 
+<!-- HTML and CSS for Customer Details Page -->
 <div class="container">
     <h1>Customer Details</h1>
 
@@ -127,6 +129,7 @@ require_once '../includes/header.php';
                     </tr>
                 </thead>
                 <tbody>
+                    <!-- Loop through orders and display them -->
                     <?php foreach ($orders as $order): ?>
                         <tr>
                             <td>#<?php echo htmlspecialchars($order['OrderID']); ?></td>
@@ -156,6 +159,7 @@ require_once '../includes/header.php';
                             <td><?php echo number_format($order['item_count']); ?></td>
                             <td>$<?php echo number_format($order['OrderTotal'], 2); ?></td>
                             <td>
+                                <!-- Display tracking number if available -->
                                 <?php if ($order['TrackingNum']): ?>
                                     <?php echo htmlspecialchars($order['TrackingNum']); ?>
                                     <br>

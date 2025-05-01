@@ -60,7 +60,8 @@ try {
     header('Location: products.php?success=Product deleted successfully');
     exit();
 
-} catch (Exception $e) {
+} 
+catch (Exception $e) {
     // Rollback transaction on error
     if ($pdo->inTransaction()) {
         $pdo->rollBack();

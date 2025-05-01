@@ -15,10 +15,10 @@ if (!isOwnerLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header
 require_once '../includes/header.php';
 
 // Get owner name for welcome message
@@ -59,11 +59,13 @@ try {
     ");
     $stmt->execute();
     $recent_orders = $stmt->fetchAll();
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error = $e->getMessage();
 }
 ?>
 
+<!-- HTML and CSS for the dashboard -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1>Welcome, <?php echo htmlspecialchars($owner_name); ?>!</h1>
 
@@ -145,6 +147,7 @@ try {
                             <td style="padding: 10px;">
                                 <?php
                                 $status_color = '';
+                                // Set color based on order status
                                 switch ($order['Status']) {
                                     case 'Processing':
                                         $status_color = 'orange';

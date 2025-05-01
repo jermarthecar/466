@@ -1,10 +1,10 @@
 <?php
-// Enable error reporting (KEEP THIS FOR DEVELOPMENT)
+// Enable error reporting
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Start session AT THE VERY BEGINNING
+// Start session
 session_start();
 
 // Clear any existing session data
@@ -17,7 +17,7 @@ error_log("Database connection included");
 // Check if database connection is established
 if (!isset($pdo)) {
     error_log("Database connection failed - \$pdo not set in db_connect.php");
-    // Display a user-friendly error, but avoid revealing specifics
+    // Display a error message to the user
     die("An error occurred connecting to the database. Please try again later or contact support.");
 }
 
@@ -27,7 +27,7 @@ $error = ''; // Initialize error message variable
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Trim input to remove accidental whitespace
     $email = trim($_POST['email'] ?? '');
-    $password = $_POST['password'] ?? ''; // Don't trim password, whitespace might be intentional
+    $password = trim($_POST['password'] ?? '');
     $user_type = $_POST['user_type'] ?? '';
 
     error_log("Attempting login - Email: [$email], User Type: [$user_type]");
@@ -36,8 +36,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($email) || empty($password) || empty($user_type)) {
         $error = "Please fill in all fields.";
         error_log("Login error: Empty fields");
-    } else {
-        // Proceed with database checks within a try...catch block
+    } 
+    else {
+        // Proceed with database checks within a try-catch block
         try {
             $user = null;
             $stmt = null;
@@ -48,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $pdo->prepare("SELECT CustomerID, Name, Email, Password FROM Customer WHERE Email = ?");
                     break;
                 case 'employee':
-                case 'owner': // Owner logs in via Employee table
+                case 'owner':
                     $stmt = $pdo->prepare("SELECT EmployeeID, Name, Email, Password, AccessLevel FROM Employee WHERE Email = ?");
                     break;
                 default:
@@ -70,7 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Try password_verify (for new accounts)
                         if (password_verify($password, $user['Password'])) {
                             $password_matches = true;
-                        } else {
+                        } 
+                        else {
                             // Try SHA2 (for legacy accounts)
                             $password_verify_stmt = $pdo->prepare("SELECT SHA2(?, 256) = ? AS password_matches");
                             $password_verify_stmt->execute([$password, $user['Password']]);
@@ -90,26 +92,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 $error = "Access denied. Not an owner account.";
                                 error_log("Login error: Attempted owner login for non-owner employee. Email: $email, AccessLevel: " . ($user['AccessLevel'] ?? 'N/A'));
                                 $user = null; // Prevent session setting
-                            } else {
+                            } 
+                            else {
                                 $_SESSION['employee_id'] = $user['EmployeeID'];
                                 $_SESSION['employee_name'] = $user['Name'];
                                 $_SESSION['access_level'] = $user['AccessLevel'];
-                                $_SESSION['user_type'] = 'owner'; // Set user type specifically to owner
+                                $_SESSION['user_type'] = 'owner';
                                 error_log("Owner login successful for: $email");
                             }
-                        } elseif ($user_type === 'employee') {
+                        } 
+                        elseif ($user_type === 'employee') {
                             if (!isset($user['AccessLevel']) || $user['AccessLevel'] === 'Owner') {
                                 $error = "Invalid login type for owner. Select 'Owner'.";
                                 error_log("Login error: Attempted employee login for owner. Email: $email");
                                 $user = null; // Prevent session setting
-                            } else {
+                            } 
+                            else {
                                 $_SESSION['employee_id'] = $user['EmployeeID'];
                                 $_SESSION['employee_name'] = $user['Name'];
                                 $_SESSION['access_level'] = $user['AccessLevel'];
                                 $_SESSION['user_type'] = 'employee';
                                 error_log("Employee login successful for: $email");
                             }
-                        } elseif ($user_type === 'customer') {
+                        } 
+                        elseif ($user_type === 'customer') {
                             $_SESSION['customer_id'] = $user['CustomerID'];
                             $_SESSION['customer_name'] = $user['Name'];
                             $_SESSION['user_type'] = 'customer';
@@ -133,9 +139,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             // Perform redirection if headers haven't been sent
                             if (!headers_sent()) {
                                 header("Location: $redirect_path");
-                                exit(); // Crucial to stop script execution after redirect
-                            } else {
-                                // Fallback if headers are already sent (shouldn't happen ideally)
+                                exit(); // Stop script execution after redirect
+                            } 
+                            else {
+                                // Fallback if headers are already sent
                                 $error = "Login successful, but could not redirect automatically.";
                                 error_log("HEADER ALREADY SENT ERROR - Cannot redirect to $redirect_path");
                                 // Provide a manual link
@@ -143,17 +150,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 exit();
                             }
                         }
-                    } else {
+                    } 
+                    else {
                         // Password mismatch
                         $error = "Invalid email or password.";
                         error_log("Password mismatch for user: $email");
                     }
-                } else {
+                } 
+                else {
                     // User email not found in the corresponding table
                     $error = "Invalid email or password.";
                     error_log("User not found for email: $email and type: $user_type");
                 }
-            } elseif (!$error) {
+            } 
+            elseif (!$error) {
                  // This case handles if $stmt remained null (e.g., invalid user_type initially)
                  // The error message for invalid user type is set above.
                  error_log("Statement preparation failed or invalid user type was caught earlier.");
@@ -224,15 +234,15 @@ if (isset($_SESSION['user_type'])) {
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box; /* Include padding and border in element's total width */
+            box-sizing: border-box;
             font-size: 1rem;
         }
         select {
-             appearance: none; /* Optional: for custom dropdown arrow styling */
-             background-color: white; /* Ensure select background is white */
+             appearance: none;
+             background-color: white;
         }
         .button {
-            background-color: #5cb85c; /* Green */
+            background-color: #5cb85c;
             color: white;
             padding: 12px 15px;
             border: none;
@@ -244,15 +254,15 @@ if (isset($_SESSION['user_type'])) {
             transition: background-color 0.3s ease;
         }
         .button:hover {
-            background-color: #4cae4c; /* Darker green */
+            background-color: #4cae4c;
         }
         .error {
-            color: #d9534f; /* Red */
+            color: #d9534f;
             margin-bottom: 15px;
             padding: 10px;
             border: 1px solid #d9534f;
             border-radius: 4px;
-            background-color: #f2dede; /* Light red background */
+            background-color: #f2dede;
             text-align: center;
         }
         .register-link {
@@ -273,10 +283,12 @@ if (isset($_SESSION['user_type'])) {
     <div class="container">
         <h1>Login</h1>
 
+        <!-- Display error message if any -->
         <?php if (!empty($error)): ?>
             <div class="error"><?php echo htmlspecialchars($error); ?></div>
         <?php endif; ?>
 
+        <!-- Login form -->
         <form method="post" action="login.php"> <div class="form-group">
                 <label for="user_type">Login As:</label>
                 <select id="user_type" name="user_type" required>

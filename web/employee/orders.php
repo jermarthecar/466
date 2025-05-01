@@ -12,10 +12,10 @@ if (!isset($_SESSION['employee_id'])) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header which might need database access
 require_once '../includes/header.php';
 
 // Get employee name for welcome message
@@ -32,11 +32,13 @@ $query = "
 ";
 $params = [];
 
+// Filter by status if provided
 if ($status_filter) {
     $query .= " AND o.Status = ?";
     $params[] = $status_filter;
 }
 
+// Search by order ID or customer name if provided
 if ($search_query) {
     $query .= " AND (o.OrderID = ? OR c.Name LIKE ?)";
     $params[] = $search_query;
@@ -50,6 +52,7 @@ $stmt->execute($params);
 $orders = $stmt->fetchAll();
 ?>
 
+<!-- HTML and CSS for the page -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Order Management</h1>
     
@@ -74,6 +77,7 @@ $orders = $stmt->fetchAll();
         </div>
     </form>
 
+    <!-- Display orders in a table -->
     <?php if (count($orders) > 0): ?>
         <table>
             <tr>

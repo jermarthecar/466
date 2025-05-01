@@ -1,5 +1,5 @@
 <?php
-session_start();
+session_start(); // Start session for owner authentication
 
 // Enable error reporting
 ini_set('display_errors', 1);
@@ -7,7 +7,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include auth functions first to start session
-require_once '../includes/auth.php';
+require_once '../includes/auth.php';  // Starts session if not started
 
 // Check if user is logged in as owner
 if (!isOwnerLoggedIn()) {
@@ -77,7 +77,8 @@ try {
     $stmt->execute([$start_date, $end_date]);
     $daily_sales = $stmt->fetchAll();
 
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error_message = "Error fetching reports: " . $e->getMessage();
     $debug_info .= "Error: " . $e->getMessage() . "\n";
 }
@@ -173,6 +174,7 @@ require_once '../includes/header.php';
     </div>
 </div>
 
+<!-- Include Chart.js for the daily sales chart -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 <?php if (isset($daily_sales)): ?>

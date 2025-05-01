@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include auth functions first to start session
-require_once '../includes/auth.php'; // This implicitly starts session if not started
+require_once '../includes/auth.php'; // Starts session if not started
 
 // Check if user is logged in as owner using the function
 if (!isOwnerLoggedIn()) {
@@ -13,10 +13,10 @@ if (!isOwnerLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header
 require_once '../includes/header.php';
 
 // Get owner name for welcome message
@@ -26,7 +26,7 @@ try {
     // Get filter from URL
     $filter = $_GET['filter'] ?? 'all';
 
-    // Base query - Select p.Category directly, remove JOIN
+    // Base query
     $query = "
         SELECT p.*, p.Category as CategoryName, -- Get category name from Product table
                (SELECT COUNT(*) FROM OrderItem oi WHERE oi.ProductID = p.ProductID) as TotalOrders
@@ -38,12 +38,15 @@ try {
     $where_clauses = [];
     if ($filter === 'in_stock') {
         $where_clauses[] = "p.StockQuantity > 0";
-    } elseif ($filter === 'out_of_stock') {
+    } 
+    elseif ($filter === 'out_of_stock') {
         $where_clauses[] = "p.StockQuantity = 0";
-    } elseif ($filter === 'low_stock') {
+    } 
+    elseif ($filter === 'low_stock') {
         $where_clauses[] = "p.StockQuantity < 10 AND p.StockQuantity > 0";
     }
 
+    // Add WHERE clause if there are any conditions
     if (!empty($where_clauses)) {
         $query .= " WHERE " . implode(' AND ', $where_clauses);
     }
@@ -53,11 +56,13 @@ try {
     $stmt = $pdo->prepare($query);
     $stmt->execute();
     $products = $stmt->fetchAll();
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error = "Database error: " . $e->getMessage();
 }
 ?>
 
+<!-- HTML and PHP code to display the product management page -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Product Management</h1>
 
@@ -92,6 +97,7 @@ try {
             </tr>
         </thead>
         <tbody>
+            <!-- Loop through products and display them -->
             <?php foreach ($products as $product): ?>
                 <tr style="border-bottom: 1px solid #ddd;">
                     <td style="padding: 10px;"><?php echo $product['ProductID']; ?></td>
@@ -103,6 +109,7 @@ try {
                     <td style="padding: 10px;"><?php echo htmlspecialchars($product['CategoryName']); // Use the alias from the query ?></td>
                     <td style="padding: 10px;">$<?php echo number_format($product['Price'], 2); ?></td>
                     <td style="padding: 10px;">
+                        <!-- Display stock status with color coding -->
                         <?php if ($product['StockQuantity'] == 0): ?>
                             <span style="color: red;">Out of Stock</span>
                         <?php elseif ($product['StockQuantity'] < 10): ?>

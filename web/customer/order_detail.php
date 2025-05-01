@@ -23,6 +23,7 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
+// Get order details
 $order_id = $_GET['id'];
 $stmt = $pdo->prepare("
     SELECT o.*, s.TrackingNum, s.DateShipped, s.Notes 
@@ -30,9 +31,11 @@ $stmt = $pdo->prepare("
     LEFT JOIN Shipment s ON o.OrderID = s.OrderID 
     WHERE o.OrderID = ? AND o.CustomerID = ?
 ");
+// Check if the order belongs to the logged-in customer
 $stmt->execute([$order_id, $_SESSION['customer_id']]);
 $order = $stmt->fetch();
 
+// If the order does not exist or does not belong to the customer, redirect to orders page
 if (!$order) {
     header("Location: orders.php");
     exit();
@@ -91,6 +94,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['message'])) {
     }
 }
 
+// Get order items
 $stmt = $pdo->prepare("
     SELECT oi.*, p.Name 
     FROM OrderItem oi 
@@ -109,6 +113,7 @@ $order_items = $stmt->fetchAll();
 <p><strong>Billing Address:</strong> <?php echo nl2br(htmlspecialchars($order['BillingAddress'])); ?></p>
 <p><strong>Payment Method:</strong> <?php echo $order['PaymentMethod']; ?></p>
 
+<!--- Display tracking information if the order is shipped -->
 <?php if ($order['Status'] === 'Shipped'): ?>
     <p><strong>Tracking Number:</strong> <?php echo htmlspecialchars($order['TrackingNum']); ?></p>
     <p><strong>Date Shipped:</strong> <?php echo $order['DateShipped']; ?></p>
@@ -126,6 +131,7 @@ $order_items = $stmt->fetchAll();
             </tr>
         </thead>
         <tbody>
+            <!-- Loop through order items and display them -->
             <?php foreach ($order_items as $item): ?>
                 <tr>
                     <td style="padding: 8px; border-bottom: 1px solid #ddd;"><?php echo htmlspecialchars($item['Name']); ?></td>
@@ -144,6 +150,7 @@ $order_items = $stmt->fetchAll();
     </table>
 </div>
 
+<!-- Message History -->
 <div style="margin-top: 30px;">
     <h3>Contact Store</h3>
     <form method="post" style="margin-bottom: 20px;">
@@ -154,6 +161,7 @@ $order_items = $stmt->fetchAll();
         <button type="submit" class="button">Send Message</button>
     </form>
 
+    <!-- If there are messages, display them -->
     <?php if (!empty($messages)): ?>
         <h4>Message History</h4>
         <div id="message-history" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
@@ -169,6 +177,7 @@ $order_items = $stmt->fetchAll();
         </div>
     <?php endif; ?>
 </div>
+
 
 <script>
 // Function to fetch and update messages

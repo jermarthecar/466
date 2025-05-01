@@ -23,6 +23,7 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
+// Get product details
 $product_id = $_GET['id'];
 $stmt = $pdo->prepare("SELECT * FROM Product WHERE ProductID = ?");
 $stmt->execute([$product_id]);
@@ -33,6 +34,7 @@ if (!$product) {
     exit();
 }
 
+// Check stock availability
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
     $quantity = (int)$_POST['quantity'];
     
@@ -46,7 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
         $stmt = $pdo->prepare("INSERT INTO Cart (CustomerID) VALUES (?)");
         $stmt->execute([$_SESSION['customer_id']]);
         $cart_id = $pdo->lastInsertId();
-    } else {
+    } 
+    else {
         $cart_id = $cart['CartID'];
     }
     
@@ -60,7 +63,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
         $new_quantity = $existing_item['Quantity'] + $quantity;
         $stmt = $pdo->prepare("UPDATE CartItem SET Quantity = ? WHERE CartID = ? AND ProductID = ?");
         $stmt->execute([$new_quantity, $cart_id, $product_id]);
-    } else {
+    } 
+    else {
         // Add new item
         $stmt = $pdo->prepare("INSERT INTO CartItem (CartID, ProductID, Quantity) VALUES (?, ?, ?)");
         $stmt->execute([$cart_id, $product_id, $quantity]);
@@ -73,25 +77,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['quantity'])) {
         JOIN Product p ON ci.ProductID = p.ProductID
         WHERE ci.CartID = ?
     ");
+
+    // Verify the cart contents
     $verify_stmt->execute([$cart_id]);
     $verify_items = $verify_stmt->fetchAll();
-    
-    // Debug information
-    $debug_info = "Cart ID: " . $cart_id . "\n";
-    $debug_info .= "Number of items: " . count($verify_items) . "\n";
-    $debug_info .= "Items in cart:\n";
-    foreach ($verify_items as $item) {
-        $debug_info .= "ID: " . $item['CartItemID'] . ", Product: " . $item['Name'] . ", Quantity: " . $item['Quantity'] . "\n";
-    }
-    
-    // Store debug info in session to display on cart page
-    $_SESSION['debug_info'] = $debug_info;
     
     header("Location: cart.php");
     exit();
 }
 ?>
 
+<!-- Main Content -->
 <h2><?php echo htmlspecialchars($product['Name']); ?></h2>
 <p><strong>Price:</strong> $<?php echo number_format($product['Price'], 2); ?></p>
 <p><strong>Category:</strong> <?php echo htmlspecialchars($product['Category']); ?></p>

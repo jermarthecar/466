@@ -5,7 +5,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 // Include auth functions first to start session
-require_once '../includes/auth.php'; // This implicitly starts session if not started
+require_once '../includes/auth.php'; // Starts session if not started
 
 // Check if user is logged in as owner using the function
 if (!isOwnerLoggedIn()) {
@@ -13,10 +13,10 @@ if (!isOwnerLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
-// Then include header which might need database access
+// Include header
 require_once '../includes/header.php';
 
 // Get owner name for welcome message
@@ -31,8 +31,6 @@ $stock_quantity = '';
 $category_name = ''; // Use category_name for text input
 
 try {
-    // No need to fetch categories from a separate table
-
     // Handle form submission
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = trim($_POST['name'] ?? '');
@@ -44,17 +42,23 @@ try {
         // Validate inputs
         if (empty($name)) {
             $error = "Product name is required.";
-        } elseif (empty($description)) {
+        } 
+        elseif (empty($description)) {
             $error = "Product description is required.";
-        } elseif (!is_numeric($price) || floatval($price) <= 0) {
+        } 
+        elseif (!is_numeric($price) || floatval($price) <= 0) {
             $error = "Price must be a positive number.";
-        } elseif (!is_numeric($stock_quantity) || intval($stock_quantity) < 0) {
+        } 
+        elseif (!is_numeric($stock_quantity) || intval($stock_quantity) < 0) {
             $error = "Stock quantity cannot be negative.";
-        } elseif (empty($category_name)) {
+        } 
+        elseif (empty($category_name)) {
             $error = "Category name is required.";
-        } elseif (strlen($category_name) > 50) {
+        } 
+        elseif (strlen($category_name) > 50) {
              $error = "Category name cannot exceed 50 characters.";
-        } else {
+        } 
+        else {
             // Convert numeric values
             $price_float = floatval($price);
             $stock_int = intval($stock_quantity);
@@ -73,16 +77,19 @@ try {
                  // Redirect to the new product's detail page
                  header('Location: product_detail.php?id=' . $product_id);
                  exit();
-            } else {
+            } 
+            else {
                 $error = "Failed to add product. Please try again.";
             }
         }
     }
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error = "Database error: " . $e->getMessage();
 }
 ?>
 
+<!-- HTML and CSS for the form -->
 <div style="max-width: 800px; margin: 0 auto; padding: 20px;">
     <h1 style="text-align: center; margin-bottom: 30px;">Add New Product</h1>
 

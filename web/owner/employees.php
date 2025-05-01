@@ -15,7 +15,7 @@ if (!isOwnerLoggedIn()) {
     exit();
 }
 
-// First establish database connection
+// Establish database connection
 require_once '../db_connect.php';
 
 // Handle form submissions
@@ -23,12 +23,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         switch ($_POST['action']) {
             case 'add':
+                // Validate input
                 if (isset($_POST['name'], $_POST['email'], $_POST['password'], $_POST['access_level'])) {
                     try {
+                        // Check if email already exists
                         $stmt = $pdo->prepare("INSERT INTO Employee (Name, Email, Password, AccessLevel) VALUES (?, ?, SHA2(?, 256), ?)");
+                        // Check for duplicate email
                         $stmt->execute([$_POST['name'], $_POST['email'], $_POST['password'], $_POST['access_level']]);
                         $success_message = "Employee added successfully!";
-                    } catch (PDOException $e) {
+                    }
+                    catch (PDOException $e) {
                         $error_message = "Error adding employee: " . $e->getMessage();
                     }
                 }
@@ -37,10 +41,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'edit':
                 if (isset($_POST['employee_id'], $_POST['name'], $_POST['email'], $_POST['access_level'])) {
                     try {
+                        // Update employee details
                         $stmt = $pdo->prepare("UPDATE Employee SET Name = ?, Email = ?, AccessLevel = ? WHERE EmployeeID = ?");
+                        // Check if password is provided for update
                         $stmt->execute([$_POST['name'], $_POST['email'], $_POST['access_level'], $_POST['employee_id']]);
                         $success_message = "Employee updated successfully!";
-                    } catch (PDOException $e) {
+                    } 
+                    catch (PDOException $e) {
                         $error_message = "Error updating employee: " . $e->getMessage();
                     }
                 }
@@ -49,10 +56,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             case 'delete':
                 if (isset($_POST['employee_id'])) {
                     try {
+                        // Start a transaction
+                        $pdo->beginTransaction();
+
+                        // First delete all messages associated with this employee
+                        $stmt = $pdo->prepare("DELETE FROM Message WHERE EmployeeID = ?");
+                        $stmt->execute([$_POST['employee_id']]);
+
+                        // Then delete the employee
                         $stmt = $pdo->prepare("DELETE FROM Employee WHERE EmployeeID = ?");
                         $stmt->execute([$_POST['employee_id']]);
+
+                        // Commit the transaction
+                        $pdo->commit();
                         $success_message = "Employee deleted successfully!";
-                    } catch (PDOException $e) {
+                    } 
+                    catch (PDOException $e) {
+                        // Rollback the transaction if something goes wrong
+                        $pdo->rollBack();
                         $error_message = "Error deleting employee: " . $e->getMessage();
                     }
                 }
@@ -65,7 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 try {
     $stmt = $pdo->query("SELECT * FROM Employee ORDER BY Name");
     $employees = $stmt->fetchAll();
-} catch (PDOException $e) {
+} 
+catch (PDOException $e) {
     $error_message = "Error fetching employees: " . $e->getMessage();
     $employees = [];
 }
@@ -127,6 +149,7 @@ require_once '../includes/header.php';
                 </tr>
             </thead>
             <tbody>
+                <!-- Loop through employees and display them in the table -->
                 <?php foreach ($employees as $employee): ?>
                     <tr>
                         <td><?php echo htmlspecialchars($employee['EmployeeID']); ?></td>
@@ -178,11 +201,13 @@ require_once '../includes/header.php';
     </div>
 </div>
 
+<!-- JavaScript for modal functionality -->
 <script>
 function showEditModal(employeeId) {
     const modal = document.getElementById('editModal');
     const employee = <?php echo json_encode($employees); ?>.find(e => e.EmployeeID == employeeId);
     
+    // Populate the modal with employee data
     if (employee) {
         document.getElementById('edit_employee_id').value = employee.EmployeeID;
         document.getElementById('edit_name').value = employee.Name;
@@ -192,6 +217,7 @@ function showEditModal(employeeId) {
     }
 }
 
+// Close the modal
 function closeEditModal() {
     document.getElementById('editModal').style.display = 'none';
 }

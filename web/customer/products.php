@@ -1,5 +1,5 @@
 <?php
-// ENABLE ERROR REPORTING
+// Enable rror reporting
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -84,6 +84,7 @@ try {
         </div>
     <?php endif; ?>
 
+    <!-- Display products in a grid layout -->
     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
         <?php foreach ($products as $product): ?>
             <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; text-align: center;">
